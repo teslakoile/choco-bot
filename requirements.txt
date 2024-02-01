@@ -1,10 +1,11 @@
 aiohttp==3.9.3
 aiosignal==1.3.1
+argcomplete==3.1.6
 attrs==23.2.0
 cfgv==3.4.0
 charset-normalizer==3.3.2
 colorama==0.4.6
-Commitizen==3.13.0
+commitizen==3.13.0
 decli==0.6.1
 discord.py==2.3.2
 distlib==0.3.8
@@ -12,6 +13,7 @@ filelock==3.13.1
 frozenlist==1.4.1
 identify==2.5.33
 idna==3.6
+importlib-metadata==6.11.0
 Jinja2==3.1.3
 MarkupSafe==2.1.4
 multidict==6.0.4
