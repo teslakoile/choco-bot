@@ -25,7 +25,7 @@ async def on_message(message):
         return
 
     if client.user in message.mentions:
-        await message.reply("Hello! I am Choco3!")
+        await message.reply("Hello! I am Choco4!")
 
 
 client.run(token)
