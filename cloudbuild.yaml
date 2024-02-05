@@ -17,9 +17,10 @@ steps:
     args:
       - 'compute'
       - 'ssh'
-      - 'instance-1' # Replace with your instance name
+      - 'kyle_naranjo@instance-1' # Replace with your instance name
       - '--zone=us-central1-a' # Replace with your instance zone
       - '--command'
+      - '--verbosity=debug'
       - |
         docker pull gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA &&
         docker stop discord-bot-container || true &&
