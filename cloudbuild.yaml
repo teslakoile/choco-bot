@@ -26,8 +26,8 @@ steps:
         docker pull gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA &&
         docker stop discord-bot-container || true &&
         docker rm discord-bot-container || true &&
+        echo "Token length: ${#DISCORD_BOT_TOKEN}" &&
         docker run -d --restart always --name discord-bot-container -e DISCORD_BOT_TOKEN=$$DISCORD_BOT_TOKEN gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA &&
-        docker exec discord-bot-container echo $$DISCORD_BOT_TOKEN
     id: Deploy Container
     secretEnv: ['DISCORD_BOT_TOKEN']
 
