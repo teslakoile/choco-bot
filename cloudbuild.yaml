@@ -22,6 +22,7 @@ steps:
       - '--verbosity=debug'
       - '--command'
       - |
+        sudo gcloud auth configure-docker --quiet &&
         docker pull gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA &&
         docker stop discord-bot-container || true &&
         docker rm discord-bot-container || true &&
