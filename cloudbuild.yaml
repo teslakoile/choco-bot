@@ -1,3 +1,5 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
 steps:
   # Step 1: Clone the repository
   # This step is implicit as Cloud Build automatically clones your repository
