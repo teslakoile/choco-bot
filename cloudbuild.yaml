@@ -32,5 +32,5 @@ steps:
 
 availableSecrets:
   secretManager:
-  - versionName: projects/$PROJECT_ID/secrets/test/versions/latest
+  - versionName: projects/327815200937/secrets/test/versions/1
     env: 'DISCORD_BOT_TOKEN'
