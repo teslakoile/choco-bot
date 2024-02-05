@@ -24,9 +24,11 @@ steps:
       - |
         sudo gcloud auth configure-docker --quiet &&
         docker pull gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA &&
+        echo "Checking if DISCORD_BOT_TOKEN is set" &&
+        [ -z "$_DISCORD_TOKEN" ] && echo "DISCORD_BOT_TOKEN is not set" || echo "DISCORD_BOT_TOKEN is set, not displaying value for security reasons" &&
         docker stop discord-bot-container || true &&
         docker rm discord-bot-container || true &&
-        docker run -d --restart always --name discord-bot-container -e DISCORD_BOT_TOKEN=$TEST gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA
+        docker run -d --restart always --name discord-bot-container -e DISCORD_BOT_TOKEN=$_DISCORD_TOKEN gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA
     id: Deploy Container
     secretEnv: ['TEST']
 
