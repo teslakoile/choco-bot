@@ -2,23 +2,21 @@ options:
   logging: CLOUD_LOGGING_ONLY
 steps:
   # Step 1: Clone the repository
-  # This step is implicit as Cloud Build automatically clones your repository
-
   # Step 2: Build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA', '.']
-  
+
   # Step 3: Push the image to Google Container Registry
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA']
-  
+
   # Step 4: SSH into the Compute Engine instance and pull/run the container
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
       - 'compute'
       - 'ssh'
-      - 'kyle_naranjo@instance-1' # Replace with your instance name
-      - '--zone=us-central1-a' # Replace with your instance zone
+      - 'kyle_naranjo@instance-1'
+      - '--zone=us-central1-a'
       - '--verbosity=debug'
       - '--command'
       - |
@@ -30,9 +28,3 @@ steps:
         docker rm discord-bot-container || true &&
         docker run -d --restart always --name discord-bot-container -e DISCORD_BOT_TOKEN=${_DISCORD_TOKEN} gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA
     id: Deploy Container
-    # secretEnv: ['TEST']
-
-# availableSecrets:
-#   secretManager:
-#   - versionName: projects/327815200937/secrets/test/versions/latest
-#     env: 'TEST'
