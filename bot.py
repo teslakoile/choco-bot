@@ -145,7 +145,7 @@ class MyClient(discord.Client):
                     print(f"An error occurred while sending a message: {e}")
             self.last_check_time = datetime.utcnow()
             ic(self.last_check_time)
-            await asyncio.sleep(5)  # Wait for 1 hour
+            await asyncio.sleep(3600)  # Wait for 1 hour
 
 
 client = MyClient(intents=intents)
