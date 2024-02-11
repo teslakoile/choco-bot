@@ -11,20 +11,20 @@ steps:
     args: ['push', 'gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA']
 
   # Step 4: SSH into the Compute Engine instance and pull/run the container
-  - name: 'gcr.io/cloud-builders/gcloud'
-    args:
-      - 'compute'
-      - 'ssh'
-      - 'kyle_naranjo@instance-1'
-      - '--zone=us-central1-a'
-      - '--verbosity=debug'
-      - '--command'
-      - |
-        sudo gcloud auth configure-docker --quiet &&
-        docker pull gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA &&
-        echo "Checking if DISCORD_BOT_TOKEN is set" &&
-        [ -z "${_DISCORD_TOKEN}" ] && echo "DISCORD_BOT_TOKEN is not set" || echo "DISCORD_BOT_TOKEN is set, not displaying value for security reasons" &&
-        docker stop discord-bot-container || true &&
-        docker rm discord-bot-container || true &&
-        docker run -d --restart always --name discord-bot-container -e DISCORD_BOT_TOKEN=${_DISCORD_TOKEN} gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA
-    id: Deploy Container
+  # - name: 'gcr.io/cloud-builders/gcloud'
+  #   args:
+  #     - 'compute'
+  #     - 'ssh'
+  #     - 'kyle_naranjo@instance-1'
+  #     - '--zone=us-central1-a'
+  #     - '--verbosity=debug'
+  #     - '--command'
+  #     - |
+  #       sudo gcloud auth configure-docker --quiet &&
+  #       docker pull gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA &&
+  #       echo "Checking if DISCORD_BOT_TOKEN is set" &&
+  #       [ -z "${_DISCORD_TOKEN}" ] && echo "DISCORD_BOT_TOKEN is not set" || echo "DISCORD_BOT_TOKEN is set, not displaying value for security reasons" &&
+  #       docker stop discord-bot-container || true &&
+  #       docker rm discord-bot-container || true &&
+  #       docker run -d --restart always --name discord-bot-container -e DISCORD_BOT_TOKEN=${_DISCORD_TOKEN} gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA
+  #   id: Deploy Container

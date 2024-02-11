@@ -135,3 +135,4 @@ cython_debug/
 # Other
 chocobot-413408-2b455b9c8e8b.json
 .tf
+startup-script.sh
