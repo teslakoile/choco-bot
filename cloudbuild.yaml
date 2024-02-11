@@ -6,13 +6,21 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA', '.']
 
-  # Step 3: Push the image to Google Container Registry
+  # Additionally tag the image as 'latest'
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['tag', 'gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA', 'gcr.io/$PROJECT_ID/my-discord-bot:latest']
+
+  # Step 3: Push the image tagged with the commit SHA to Google Container Registry
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA']
 
-# Step 4: Restart the VM to trigger the startup script
-  - name: 'gcr.io/cloud-builders/gcloud'
-    args: ['compute', 'instances', 'reset', 'instance-1', '--zone=us-central1-a']
+  # Step 4: Also push the 'latest' tag to Google Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/my-discord-bot:latest']
+
+# Step 5: Restart the VM to trigger the startup script
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['compute', 'instances', 'reset', 'instance-1', '--zone=us-central1-a']
 
   # Step 4: SSH into the Compute Engine instance and pull/run the container
   # - name: 'gcr.io/cloud-builders/gcloud'
