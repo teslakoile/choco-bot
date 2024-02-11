@@ -146,7 +146,7 @@ class MyClient(discord.Client):
             self.last_check_time = datetime.utcnow()
             ic(self.last_check_time)
             # await asyncio.sleep(3600)  # Wait for 1 hour
-            await asyncio.sleep(60)  # Wait for 10 seconds
+            await asyncio.sleep(28800)  # Wait for 10 seconds
             
 
 
