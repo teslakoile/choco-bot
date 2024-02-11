@@ -10,6 +10,10 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/my-discord-bot:$SHORT_SHA']
 
+# Step 4: Restart the VM to trigger the startup script
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: ['compute', 'instances', 'reset', 'instance-1', '--zone=us-central1-a']
+
   # Step 4: SSH into the Compute Engine instance and pull/run the container
   # - name: 'gcr.io/cloud-builders/gcloud'
   #   args:
