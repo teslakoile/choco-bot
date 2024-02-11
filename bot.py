@@ -147,7 +147,7 @@ class MyClient(discord.Client):
             ic(self.last_check_time)
             # await asyncio.sleep(3600)  # Wait for 1 hour
             await asyncio.sleep(60)  # Wait for 10 seconds
-            print("hello3")
+            print("hello2")
 
 
 client = MyClient(intents=intents)
