@@ -34,7 +34,7 @@ youtube = build("youtube", "v3", developerKey=youtube_api_key)
 # replies', textFormat='plainText').execute()
 # ic(comments_response)
 
-
+print("Bot is running")
 async def check_new_comments(youtube_channel_id, last_check_time):
     # Fetch the upload playlist ID of the channel
     channel_response = (
@@ -147,7 +147,7 @@ class MyClient(discord.Client):
             ic(self.last_check_time)
             # await asyncio.sleep(3600)  # Wait for 1 hour
             await asyncio.sleep(60)  # Wait for 10 seconds
-            print("hello2")
+            
 
 
 client = MyClient(intents=intents)
