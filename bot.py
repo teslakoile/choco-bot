@@ -37,6 +37,24 @@ youtube = build("youtube", "v3", developerKey=youtube_api_key)
 print("Bot is running")
 
 
+def process_comment(
+    comment_snippet, video_title, video_id, last_check_time, new_comments
+):
+    comment_time = datetime.strptime(
+        comment_snippet["publishedAt"], "%Y-%m-%dT%H:%M:%SZ"
+    )
+    if comment_time > last_check_time:
+        new_comments.append(
+            {
+                "video": video_title,
+                "author": comment_snippet["authorDisplayName"],
+                "text": comment_snippet["textDisplay"],
+                "time": comment_snippet["publishedAt"],
+                "videoId": video_id,
+            }
+        )
+
+
 async def check_new_comments(youtube_channel_id, last_check_time):
     # Fetch the upload playlist ID of the channel
     channel_response = (
@@ -77,40 +95,34 @@ async def check_new_comments(youtube_channel_id, last_check_time):
                 )
 
                 for comment_thread in comments_response["items"]:
-                    comment = comment_thread["snippet"]["topLevelComment"]["snippet"]
-                    # Check if 'publishedAt' exists for the comment
-                    if 'publishedAt' in comment:
-                        comment_time = datetime.strptime(comment["publishedAt"], "%Y-%m-%dT%H:%M:%SZ")
-                        if comment_time > last_check_time:
-                            new_comments.append({
-                                "video": video_title,
-                                "author": comment["authorDisplayName"],
-                                "text": comment["textDisplay"],
-                                "time": comment["publishedAt"],
-                                "videoId": video_id,
-                            })
+                    top_level_comment_snippet = comment_thread["snippet"][
+                        "topLevelComment"
+                    ]["snippet"]
+                    process_comment(
+                        top_level_comment_snippet,
+                        video_title,
+                        video_id,
+                        last_check_time,
+                        new_comments,
+                    )
+
                     if "replies" in comment_thread:
                         for reply in comment_thread["replies"]["comments"]:
-                            # Check if 'publishedAt' exists for the reply
-                            if 'publishedAt' in reply:
-                                reply_time = datetime.strptime(reply["publishedAt"], "%Y-%m-%dT%H:%M:%SZ")
-                                if reply_time > last_check_time:
-                                    new_comments.append({
-                                        "video": video_title,
-                                        "author": reply["authorDisplayName"],
-                                        "text": reply["textDisplay"],
-                                        "time": reply["publishedAt"],
-                                        "videoId": video_id,
-                                    })
+                            reply_snippet = reply["snippet"]
+                            process_comment(
+                                reply_snippet,
+                                video_title,
+                                video_id,
+                                last_check_time,
+                                new_comments,
+                            )
             except HttpError as error:
-                # Check if the error is due to disabled comments
                 if (
                     error.resp.status == 403
                     and "commentsDisabled" in error.content.decode()
                 ):
                     print(f"Comments are disabled for the video: {video_id}. Skipping.")
                 else:
-                    # If the error is due to another issue, re-raise the exception
                     raise
 
         next_page_token = playlist_response.get("nextPageToken")
@@ -123,6 +135,7 @@ async def check_new_comments(youtube_channel_id, last_check_time):
 # ic(check_new_comments(youtube_channel_id, datetime(2021, 8, 1, 0, 0, 0)))
 
 discord_user_id = "1202167609613893642"
+
 
 class MyClient(discord.Client):
     async def on_ready(self):
@@ -169,7 +182,7 @@ class MyClient(discord.Client):
                 await channel.send(f"No new comments since {last_check_formatted}.")
             self.last_check_time = datetime.utcnow()
             # ic(self.last_check_time)
-            await asyncio.sleep(120)  # Wait for 1 hour
+            await asyncio.sleep(10)  # Wait for 1 hour
             # await asyncio.sleep(28800)  # Wait for 10 seconds
 
 
