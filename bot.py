@@ -182,7 +182,7 @@ class MyClient(discord.Client):
                 await channel.send(f"No new comments since {last_check_formatted}.")
             self.last_check_time = datetime.utcnow()
             # ic(self.last_check_time)
-            await asyncio.sleep(10)  # Wait for 1 hour
+            await asyncio.sleep(300)  # Wait for 1 hour
             # await asyncio.sleep(28800)  # Wait for 10 seconds
 
 
