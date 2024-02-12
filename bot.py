@@ -61,7 +61,7 @@ async def check_new_comments(youtube_channel_id, last_check_time):
             )
             .execute()
         )
-        ic(playlist_response)
+        # ic(playlist_response)
 
         for video in playlist_response["items"]:
             video_id = video["snippet"]["resourceId"]["videoId"]
@@ -129,7 +129,6 @@ async def check_new_comments(youtube_channel_id, last_check_time):
 
 discord_user_id = "1202167609613893642"
 
-
 class MyClient(discord.Client):
     async def on_ready(self):
         print(f"Logged in as {self.user}")
@@ -173,7 +172,7 @@ class MyClient(discord.Client):
                 await channel.send(f"No new comments since {last_check_formatted}.")
             self.last_check_time = datetime.utcnow()
             ic(self.last_check_time)
-            await asyncio.sleep(3600)  # Wait for 1 hour
+            await asyncio.sleep(120)  # Wait for 1 hour
             # await asyncio.sleep(28800)  # Wait for 10 seconds
 
 
