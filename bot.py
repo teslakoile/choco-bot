@@ -47,7 +47,7 @@ async def check_new_comments(youtube_channel_id, last_check_time):
     # Fetch recent videos from the upload playlist
     playlist_response = (
         youtube.playlistItems()
-        .list(playlistId=uploads_playlist_id, part="snippet", maxResults=5)
+        .list(playlistId=uploads_playlist_id, part="snippet", maxResults=150)
         .execute()
     )
 
