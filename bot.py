@@ -78,35 +78,30 @@ async def check_new_comments(youtube_channel_id, last_check_time):
 
                 for comment_thread in comments_response["items"]:
                     comment = comment_thread["snippet"]["topLevelComment"]["snippet"]
-                    comment_time = datetime.strptime(
-                        comment["publishedAt"], "%Y-%m-%dT%H:%M:%SZ"
-                    )
-                    if comment_time > last_check_time:
-                        new_comments.append(
-                            {
+                    # Check if 'publishedAt' exists for the comment
+                    if 'publishedAt' in comment:
+                        comment_time = datetime.strptime(comment["publishedAt"], "%Y-%m-%dT%H:%M:%SZ")
+                        if comment_time > last_check_time:
+                            new_comments.append({
                                 "video": video_title,
                                 "author": comment["authorDisplayName"],
                                 "text": comment["textDisplay"],
                                 "time": comment["publishedAt"],
                                 "videoId": video_id,
-                            }
-                        )
-                        # Check for replies
-                        if "replies" in comment_thread:
-                            for reply in comment_thread["replies"]["comments"]:
-                                reply_time = datetime.strptime(
-                                    reply["publishedAt"], "%Y-%m-%dT%H:%M:%SZ"
-                                )
+                            })
+                    if "replies" in comment_thread:
+                        for reply in comment_thread["replies"]["comments"]:
+                            # Check if 'publishedAt' exists for the reply
+                            if 'publishedAt' in reply:
+                                reply_time = datetime.strptime(reply["publishedAt"], "%Y-%m-%dT%H:%M:%SZ")
                                 if reply_time > last_check_time:
-                                    new_comments.append(
-                                        {
-                                            "video": video_title,
-                                            "author": reply["authorDisplayName"],
-                                            "text": reply["textDisplay"],
-                                            "time": reply["publishedAt"],
-                                            "videoId": video_id,
-                                        }
-                                    )
+                                    new_comments.append({
+                                        "video": video_title,
+                                        "author": reply["authorDisplayName"],
+                                        "text": reply["textDisplay"],
+                                        "time": reply["publishedAt"],
+                                        "videoId": video_id,
+                                    })
             except HttpError as error:
                 # Check if the error is due to disabled comments
                 if (
@@ -145,6 +140,7 @@ class MyClient(discord.Client):
             new_comments = await check_new_comments(
                 youtube_channel_id, self.last_check_time
             )
+            ic(new_comments)
             if new_comments:
                 comments_count = len(new_comments)
                 comments_word = "comment" if comments_count == 1 else "comments"
@@ -162,6 +158,7 @@ class MyClient(discord.Client):
                         ]
                     )
                 )
+                ic(message)
                 await channel.send(message)
             else:
                 last_check_formatted = (
@@ -171,7 +168,7 @@ class MyClient(discord.Client):
                 )
                 await channel.send(f"No new comments since {last_check_formatted}.")
             self.last_check_time = datetime.utcnow()
-            ic(self.last_check_time)
+            # ic(self.last_check_time)
             await asyncio.sleep(120)  # Wait for 1 hour
             # await asyncio.sleep(28800)  # Wait for 10 seconds
 
