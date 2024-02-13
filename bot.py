@@ -56,42 +56,79 @@ def process_comment(
 
 async def check_new_comments(youtube_channel_id, last_check_time):
     # Fetch the upload playlist ID of the channel
-    channel_response = youtube.channels().list(id=youtube_channel_id, part="contentDetails").execute()
-    uploads_playlist_id = channel_response["items"][0]["contentDetails"]["relatedPlaylists"]["uploads"]
+    channel_response = (
+        youtube.channels().list(id=youtube_channel_id, part="contentDetails").execute()
+    )
+    uploads_playlist_id = channel_response["items"][0]["contentDetails"][
+        "relatedPlaylists"
+    ]["uploads"]
 
     new_comments = []
     next_page_token = None
 
     # Fetch recent videos from the upload playlist with pagination
     while True:
-        playlist_response = youtube.playlistItems().list(
-            playlistId=uploads_playlist_id, part="snippet", maxResults=50, pageToken=next_page_token
-        ).execute()
+        playlist_response = (
+            youtube.playlistItems()
+            .list(
+                playlistId=uploads_playlist_id,
+                part="snippet",
+                maxResults=50,
+                pageToken=next_page_token,
+            )
+            .execute()
+        )
+        # ic(playlist_response)
 
         for video in playlist_response["items"]:
             video_id = video["snippet"]["resourceId"]["videoId"]
             video_title = video["snippet"]["title"]
-
+            # Fetch comments for each video
             try:
-                # Fetch comments for each video
-                comments_response = youtube.commentThreads().list(
-                    videoId=video_id, part="snippet", textFormat="plainText"
-                ).execute()
+                comments_response = (
+                    youtube.commentThreads()
+                    .list(
+                        videoId=video_id, part="snippet,replies", textFormat="plainText"
+                    )
+                    .execute()
+                )
 
                 for comment_thread in comments_response["items"]:
                     comment = comment_thread["snippet"]["topLevelComment"]["snippet"]
-                    comment_time = datetime.strptime(comment["publishedAt"], "%Y-%m-%dT%H:%M:%SZ")
-                    if comment_time > last_check_time:
-                        new_comments.append({
-                            "video": video_title,
-                            "author": comment["authorDisplayName"],
-                            "text": comment["textDisplay"],
-                            "time": comment["publishedAt"],
-                            "videoId": video_id,
-                        })
+                    # Check if 'publishedAt' exists for the comment
+                    if 'publishedAt' in comment:
+                        comment_time = datetime.strptime(comment["publishedAt"], "%Y-%m-%dT%H:%M:%SZ")
+                        if comment_time > last_check_time:
+                            new_comments.append({
+                                "video": video_title,
+                                "author": comment["authorDisplayName"],
+                                "text": comment["textDisplay"],
+                                "time": comment["publishedAt"],
+                                "videoId": video_id,
+                            })
+                    # if "replies" in comment_thread:
+                    #     for reply in comment_thread["replies"]["comments"]:
+                    #         # Check if 'publishedAt' exists for the reply
+                    #         if 'publishedAt' in reply:
+                    #             reply_time = datetime.strptime(reply["publishedAt"], "%Y-%m-%dT%H:%M:%SZ")
+                    #             if reply_time > last_check_time:
+                    #                 new_comments.append({
+                    #                     "video": video_title,
+                    #                     "author": reply["authorDisplayName"],
+                    #                     "text": reply["textDisplay"],
+                    #                     "time": reply["publishedAt"],
+                    #                     "videoId": video_id,
+                    #                 })
             except HttpError as error:
-                print(f"Error fetching comments for video {video_id}: {error}")
-                continue  # Move to the next video if there's an error with the current one
+                # Check if the error is due to disabled comments
+                if (
+                    error.resp.status == 403
+                    and "commentsDisabled" in error.content.decode()
+                ):
+                    print(f"Comments are disabled for the video: {video_id}. Skipping.")
+                else:
+                    # If the error is due to another issue, re-raise the exception
+                    raise
 
         next_page_token = playlist_response.get("nextPageToken")
         if not next_page_token:
