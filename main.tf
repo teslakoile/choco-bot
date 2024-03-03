@@ -1,3 +1,6 @@
+/*
+TODO: Integration with Terraform
+
 provider "google" {
   credentials = file("chocobot-413408-2b455b9c8e8b.json.json")
   project     = "chocobot-413408"
@@ -40,3 +43,4 @@ resource "google_compute_instance" "instance-1" {
     automatic_restart = true
   }
 }
+*/
