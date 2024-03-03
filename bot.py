@@ -6,7 +6,6 @@ import discord
 from dotenv import load_dotenv
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from icecream import ic
 
 intents = discord.Intents.default()
 
@@ -48,7 +47,6 @@ async def check_new_comments(youtube_channel_id, last_check_time):
             )
             .execute()
         )
-        ic(playlist_response)
 
         for video in playlist_response["items"]:
             video_id = video["snippet"]["resourceId"]["videoId"]
@@ -61,7 +59,6 @@ async def check_new_comments(youtube_channel_id, last_check_time):
                     )
                     .execute()
                 )
-                ic(comments_response)
 
                 for comment_thread in comments_response["items"]:
                     comment = comment_thread["snippet"]["topLevelComment"]["snippet"]
