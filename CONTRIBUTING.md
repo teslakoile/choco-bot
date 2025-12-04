@@ -11,7 +11,7 @@ We welcome contributions that improve the bot, its infrastructure, or the surrou
 1. **Fork and branch**: Fork the repository and create a feature branch with a descriptive name (for example, `feature/youtube-pagination` or `fix/discord-timeout`).
 2. **Set up the environment**: Create a virtual environment and install dependencies via `pip install -r requirements.txt`.
 3. **Implement changes**: Keep commits focused and descriptive (conventional commits are welcome, e.g., `fix: resolve discord timeout`). Include tests or examples when applicable.
-4. **Lint and sanity checks**: Run the configured formatters and linters—`pre-commit run --all-files` will execute the project's hooks (including formatting and linting). Ensure the bot still runs with `python bot.py` after your changes.
+4. **Lint and sanity checks**: Install the hooks with `pip install pre-commit` (if you haven't already) and run `pre-commit run --all-files` to execute the configured formatters and linters. Ensure the bot still runs with `python bot.py` after your changes.
 5. **Pull request**: Open a PR against the `main` branch. In the description, summarize the problem, the approach you took, and any follow-up work that may be needed.
 
 ## Code Guidelines
